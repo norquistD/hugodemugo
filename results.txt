@@ -1,0 +1,52 @@
+PS C:\Users\norquistd\FALL25\AI\hugodemugo> .\train.ps1
+pygame 2.6.1 (SDL 2.28.4, Python 3.12.11)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+Qvalues loaded from enhanced/qvalues.json
+Reached maximum steps: 100000000
+Training: 100000330 step [41:52, 39796.38 step/s, Score=13, Reason=Tail, High=50, Epsilon=0.0250, AvgReward=18.155, Games=685181]
+pygame 2.6.1 (SDL 2.28.4, Python 3.12.11)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+Qvalues loaded from enhanced/qvalues.json
+Running evaluation mode (epsilon=0, no Q-table updates)...
+Reached maximum steps: 1000000
+Evaluation: 1000343 step [00:22, 45113.49 step/s, Score=51, Avg=52.8, Max=100, Reason=Tail]
+Episodes: 556
+Average Score: 52.83
+Max Score: 100
+Min Score: 11
+Total Steps: 1000343
+Average Steps per Episode: 1799.2
+pygame 2.6.1 (SDL 2.28.4, Python 3.12.11)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+No qvalues file found, creating new one
+Reached maximum steps: 100000000                                                                                                                                                   
+Training: 100000625 step [18:11, 91655.01 step/s, Score=0, Reason=Screen, High=2, Epsilon=0.1949, AvgReward=-29.492, Games=163502] 
+pygame 2.6.1 (SDL 2.28.4, Python 3.12.11)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+Qvalues loaded from naive/qvalues.json
+Running evaluation mode (epsilon=0, no Q-table updates)...
+Reached maximum steps: 1000000                                                                                                                                                     
+Evaluation: 1001366 step [00:07, 132914.20 step/s, Score=0, Avg=0.0, Max=1, Reason=Steps]
+Episodes: 82
+Average Score: 0.02
+Max Score: 1
+Min Score: 0
+Total Steps: 1001366
+Average Steps per Episode: 12211.8
+pygame 2.6.1 (SDL 2.28.4, Python 3.12.11)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+No qvalues file found, creating new one
+Reached maximum steps: 100000000
+Training: 100000042 step [31:48, 52407.59 step/s, Score=5, Reason=Tail, High=59, Epsilon=0.0250, AvgReward=21.863, Games=684558]
+pygame 2.6.1 (SDL 2.28.4, Python 3.12.11)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+Qvalues loaded from basic/qvalues.json
+Running evaluation mode (epsilon=0, no Q-table updates)...
+Reached maximum steps: 1000000
+Evaluation: 1001201 step [00:21, 47291.80 step/s, Score=58, Avg=47.8, Max=96, Reason=Tail]
+Episodes: 614
+Average Score: 47.80
+Max Score: 96
+Min Score: 11
+Total Steps: 1001201
+Average Steps per Episode: 1630.6

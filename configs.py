@@ -41,8 +41,8 @@ class SnakeConfig(BaseSettings):
 
     # Learning parameters
     EPSILON: float = Field(default=1, ge=0.0, le=1.0)
-    EPSILON_MIN: float = Field(default=0.001, ge=0.0, le=1.0)
-    EPSILON_DECAY: float = Field(default=0.999, ge=0.0, le=1.0)
+    EPSILON_MIN: float = Field(default=0.025, ge=0.0, le=1.0)
+    EPSILON_DECAY: float = Field(default=0.99999, ge=0.0, le=1.0)
     LEARNING_RATE: float = Field(default=0.03, ge=0.0, le=1.0)
     DISCOUNT: float = Field(default=0.9, ge=0.0, le=1.0)
 

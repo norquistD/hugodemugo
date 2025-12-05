@@ -31,7 +31,7 @@ def _update_progress_bar(
         "Epsilon": f"{epsilon:.4f}",
         "AvgReward": f"{avg_reward:.3f}",
     }
-    if cfg.MAX_TRAINING_STEPS is not None:
+    if cfg.MAX_STEPS is not None:
         postfix["Games"] = game_count
     pbar.set_postfix(postfix)
 
@@ -167,7 +167,7 @@ def train() -> None:
 
             # Periodic save
             if game_count % cfg.QVALUES_SAVE_INTERVAL == 0:
-                pbar.write("Save Qvals")
+                # pbar.write("Save Qvals")
                 agent.save_qvalues()
     except KeyboardInterrupt:
         pbar.write("Training interrupted by user. Saving Q-values...")
