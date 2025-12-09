@@ -1,5 +1,11 @@
 """
-Configuration settings for Snake Q-Learning game using Pydantic.
+Configuration Management
+
+Centralized configuration using Pydantic and tyro for CLI parsing. Implements
+singleton pattern accessed via get_config() by all modules (agent.py, game.py,
+snake_game.py, renderer.py). Parses command-line arguments (--steps, --state,
+--visuals, --evals) and provides type-safe settings for game parameters, learning
+hyperparameters, and state representation selection.
 """
 
 import sys
@@ -36,19 +42,17 @@ class SnakeConfig(BaseSettings):
     EVALS_MODE: bool = False
     # Maximum number of total steps (None = unlimited, works for both training and evaluation)
     MAX_STEPS: Optional[int] = Field(default=None, ge=1)
-    # Maximum number of steps per game (game ends if exceeded)
-    MAX_STEPS_PER_GAME: int = Field(default=20_000, ge=1)
+    # Maximum number of steps since last fruit eaten (game ends if exceeded)
+    MAX_STEPS_SINCE_LAST_FRUIT: int = Field(default=2_000, ge=1)
 
     # Learning parameters
-    EPSILON: float = Field(default=1, ge=0.0, le=1.0)
-    EPSILON_MIN: float = Field(default=0.025, ge=0.0, le=1.0)
-    EPSILON_DECAY: float = Field(default=0.99999, ge=0.0, le=1.0)
+    EPSILON: float = Field(default=0.02, ge=0.0, le=1.0)
     LEARNING_RATE: float = Field(default=0.03, ge=0.0, le=1.0)
     DISCOUNT: float = Field(default=0.9, ge=0.0, le=1.0)
 
     # State representation strategy
-    STATE_REPRESENTATION: Literal["basic", "enhanced", "naive"] = Field(
-        default="basic", pattern="^(basic|enhanced|naive)$"
+    STATE_REPRESENTATION: Literal["basic", "naive"] = Field(
+        default="basic", pattern="^(basic|naive)$"
     )
 
     # Action mappings (constants)
@@ -96,9 +100,9 @@ def _init_config_from_cli(args: Optional[List[str]] = None) -> SnakeConfig:
         visuals: bool = field(
             default=False, metadata={"help": "Enable pygame visualization"}
         )
-        state: Literal["basic", "enhanced", "naive"] = field(
+        state: Literal["basic", "naive"] = field(
             default="basic",
-            metadata={"help": "State representation (basic, enhanced, or naive)"},
+            metadata={"help": "State representation (basic or naive)"},
         )
         evals: bool = field(
             default=False,

@@ -1,3 +1,12 @@
+"""
+Q-Learning Agent Implementation
+
+Implements the Q-learning agent that learns to play Snake. Used by game.py for action
+selection and Q-value updates. Reads configuration from configs.py and uses state
+representation functions from state_representations.py to encode game states. Saves
+Q-tables to JSON files in state-specific directories (basic/, naive/).
+"""
+
 import random
 import json
 from typing import Optional, Dict, List
@@ -18,7 +27,6 @@ class Agent:
 
         # Learning parameters
         self.epsilon = self.cfg.EPSILON
-        self.epsilon_decay = self.cfg.EPSILON_DECAY
         self.learning_rate = self.cfg.LEARNING_RATE
         self.discount = self.cfg.DISCOUNT
 
@@ -189,7 +197,7 @@ class Agent:
         if hasattr(state, "_state_str") and state._state_str is not None:
             base_state_str = state._state_str
         else:
-            # Include all position elements to support enhanced representation
+            # Include all position elements to support basic representation
             base_state_str = str((*state.position, state.surroundings, state.direction))
             state._state_str = base_state_str
 

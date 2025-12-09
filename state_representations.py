@@ -1,8 +1,10 @@
 """
-State representation functions for Q-learning.
+State Representation Functions for Q-Learning
 
-Each function takes the same parameters and returns a GameState object.
-Functions should be pure (no side effects) and can be easily swapped via config.
+Defines state encoding strategies (basic and naive) that convert game state
+from snake_game.py into GameState objects for agent.py. Used by agent.py via the
+STATE_REPRESENTATIONS dictionary. Strategy selection is configured in configs.py.
+Each strategy produces different state encodings, affecting learning performance.
 """
 
 from dataclasses import dataclass, field
@@ -18,15 +20,15 @@ class GameState:
     direction: int
     _state_str: Optional[str] = field(
         default=None, init=False
-    )  # Cached state string to avoid repeated conversions
+    )  # Cached state string to avoid repeated conversions | Cached for performance
     strategy_name: str = field(
         default="basic", init=False
-    )  # Strategy name for state string
+    )  # Strategy name for state string | Used for state string caching
 
     def __post_init__(self) -> None:
         # Cache the state string on creation
         if self._state_str is None:
-            # Include all position elements to support enhanced representation
+            # Include all position elements to support basic representation
             self._state_str = str(
                 (*self.position, self.surroundings, self.direction)
             )
@@ -131,46 +133,6 @@ def get_state_basic(
     return state
 
 
-def get_state_enhanced(
-    direction: int,
-    snake: List[Tuple[float, float]],
-    food: Tuple[float, float],
-    display_width: int,
-    display_height: int,
-    block_size: int,
-) -> GameState:
-    """
-    Enhanced state representation with additional features:
-    - Food position relative to snake (left/right, above/below)
-    - Surroundings (4 directions: danger or safe)
-    - Current direction
-    - Snake length (normalized)
-    """
-    snake_head = snake[-1]
-    snake_body_set = set(snake[:-1]) if len(snake) > 1 else set()
-    snake_length = len(snake)
-
-    dist_x, dist_y, pos_x, pos_y = _get_food_position(snake_head, food)
-    surroundings = _get_surroundings(
-        snake_head, snake_body_set, display_width, display_height, block_size
-    )
-
-    # Add snake length to position tuple for enhanced representation
-    # Normalize length to a small range to keep state space manageable
-    normalized_length = "1" if snake_length > 100 else "0"
-    position = (pos_x, pos_y, normalized_length)
-
-    state = GameState(
-        distance=(dist_x, dist_y),
-        position=position,
-        surroundings=surroundings,
-        food=food,
-        direction=direction,
-    )
-    state.strategy_name = "enhanced"
-    return state
-
-
 def get_state_naive(
     direction: int,
     snake: List[Tuple[float, float]],
@@ -214,6 +176,5 @@ def get_state_naive(
 # Dictionary mapping strategy names to their functions
 STATE_REPRESENTATIONS = {
     "basic": get_state_basic,
-    "enhanced": get_state_enhanced,
     "naive": get_state_naive,
 }

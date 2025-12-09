@@ -1,0 +1,6 @@
+pygame>=2.6.1
+tqdm>=4.66.0
+pydantic>=2.0.0
+pydantic-settings>=2.0.0
+tyro>=0.8.0
+matplotlib>=3.7.0

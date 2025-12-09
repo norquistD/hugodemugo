@@ -1,6 +1,11 @@
 """
-Pure Snake game engine - no visualization, no training logic.
-Encapsulates game state and provides step-based interface.
+Pure Snake Game Engine
+
+Implements core Snake game logic (movement, collision detection, food generation)
+without visualization or learning. Used by game.py to run game episodes. Provides
+Gym-style step() interface returning (observation, reward, done, info). Game state
+is passed to agent.py for action selection and to renderer.py for visualization.
+Reads game settings from configs.py.
 """
 
 import random
@@ -34,6 +39,7 @@ class SnakeGame:
         self.dead = False
         self.reason = None
         self.steps = 0
+        self.steps_since_last_fruit = 0
 
     def step(self, action: str) -> Tuple[Dict[str, Any], float, bool, Dict[str, Any]]:
         """
@@ -53,9 +59,10 @@ class SnakeGame:
             return self.get_observation(), -1.0, True, {"reason": self.reason}
 
         self.steps += 1
+        self.steps_since_last_fruit += 1
 
-        # Check if max steps per game exceeded
-        if self.steps >= self.cfg.MAX_STEPS_PER_GAME:
+        # Check if max steps since last fruit exceeded
+        if self.steps_since_last_fruit >= self.cfg.MAX_STEPS_SINCE_LAST_FRUIT:
             self.dead = True
             self.reason = "Steps"
             return self.get_observation(), -1.0, True, {"reason": self.reason}
@@ -85,6 +92,7 @@ class SnakeGame:
         if self.snake_x == self.food_x and self.snake_y == self.food_y:
             self.food_x, self.food_y = self._generate_food_position()
             self.snake_length += 1
+            self.steps_since_last_fruit = 0  # Reset counter when fruit is eaten
             reward = 1.0
         else:
             # Remove tail if we didn't eat food
@@ -181,6 +189,6 @@ class SnakeGame:
 
     def close(self) -> None:
         """Close/cleanup the environment (Gym convention)."""
-        # No cleanup needed for this simple implementation
+        # This is kept incase I needed to add cleanup logic in the future
         pass
 

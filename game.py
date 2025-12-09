@@ -1,12 +1,18 @@
 """
-Training orchestration for Snake Q-Learning.
-Handles the training loop, progress tracking, and agent interaction.
+Training Orchestration and Main Entry Point
+
+Main entry point that coordinates training and evaluation. Orchestrates interaction
+between Agent (from agent.py), SnakeGame (from snake_game.py), and Renderer (from
+renderer.py). Reads configuration from configs.py. Manages training loops, progress
+tracking, and Q-table persistence. Supports both training mode (with learning) and
+evaluation mode (testing without updates).
 """
 
 import itertools
 import os
 from typing import Optional, Tuple
 from tqdm import tqdm
+import matplotlib.pyplot as plt
 from agent import Agent
 from snake_game import SnakeGame
 from renderer import Renderer
@@ -34,6 +40,64 @@ def _update_progress_bar(
     if cfg.MAX_STEPS is not None:
         postfix["Games"] = game_count
     pbar.set_postfix(postfix)
+
+
+def plot_rewards_and_scores(rewards: list[float], scores: list[int], state: str) -> None:
+    """
+    Plot reward and score per game with moving averages as two separate subplots on the same image.
+    
+    Args:
+        rewards: List of rewards for each game
+        scores: List of scores for each game
+        state: State representation name (e.g., "naive", "basic")
+    """
+    if not rewards or not scores:
+        return
+    
+    if len(rewards) != len(scores):
+        return
+    
+    # Calculate moving averages with window size 100
+    window_size = 100
+    reward_moving_avg = []
+    score_moving_avg = []
+    
+    for i in range(len(rewards)):
+        start_idx = max(0, i - window_size + 1)
+        window_rewards = rewards[start_idx:i + 1]
+        window_scores = scores[start_idx:i + 1]
+        reward_moving_avg.append(sum(window_rewards) / len(window_rewards))
+        score_moving_avg.append(sum(window_scores) / len(window_scores))
+    
+    # Create figure with two subplots stacked vertically
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 10))
+    games = list(range(1, len(rewards) + 1))
+    
+    # Plot rewards on top subplot
+    ax1.plot(games, rewards, alpha=0.3, color='blue', label='Reward per Game', linewidth=0.5)
+    ax1.plot(games, reward_moving_avg, color='red', label=f'Moving Average (window={window_size})', linewidth=2)
+    ax1.set_xlabel('Game Number')
+    ax1.set_ylabel('Reward')
+    ax1.set_title(f'Reward per Game - {state.capitalize()} State Representation')
+    ax1.legend()
+    ax1.grid(True, alpha=0.3)
+    
+    # Plot scores on bottom subplot
+    ax2.plot(games, scores, alpha=0.3, color='green', label='Score per Game', linewidth=0.5)
+    ax2.plot(games, score_moving_avg, color='orange', label=f'Moving Average (window={window_size})', linewidth=2)
+    ax2.set_xlabel('Game Number')
+    ax2.set_ylabel('Score')
+    ax2.set_title(f'Score per Game - {state.capitalize()} State Representation')
+    ax2.legend()
+    ax2.grid(True, alpha=0.3)
+    
+    plt.tight_layout()
+    
+    # Save to file
+    filename = f"{state}/reward_and_score_plots.png"
+    plt.savefig(filename, dpi=150, bbox_inches='tight')
+    plt.close()
+    print(f"Reward and score plots saved to {filename}")
 
 
 def run_episode(agent: Agent, renderer: Renderer, update_qvalues: bool = True) -> Tuple[int, Optional[str], int, float]:
@@ -96,6 +160,8 @@ def train() -> None:
     high_score = 0
     total_steps = 0
     recent_rewards = []  # Track rewards for last 100 games
+    all_rewards = []  # Track all rewards for plotting
+    all_scores = []  # Track all scores for plotting
 
     # Setup progress bar
     if cfg.MAX_STEPS is not None:
@@ -123,9 +189,7 @@ def train() -> None:
     try:
         for game_count in itertools.count(start=1):
             # Update epsilon
-            agent.epsilon = max(
-                agent.epsilon * agent.epsilon_decay, cfg.EPSILON_MIN
-            )
+            agent.epsilon = max(0, cfg.EPSILON * (0.8 - (total_steps / cfg.MAX_STEPS)**4))
 
             # Run one episode
             score, reason, game_steps, total_reward = run_episode(agent, renderer)
@@ -136,6 +200,8 @@ def train() -> None:
             if len(recent_rewards) > 100:
                 recent_rewards.pop(0)
             avg_reward = sum(recent_rewards) / len(recent_rewards)
+            all_rewards.append(total_reward)  # Track all rewards for plotting
+            all_scores.append(score)  # Track all scores for plotting
 
             # Update progress bar
             if cfg.MAX_STEPS is not None:
@@ -175,6 +241,9 @@ def train() -> None:
         # Final save
         agent.save_qvalues()
         pbar.close()
+        # Generate combined plot
+        if all_rewards and all_scores:
+            plot_rewards_and_scores(all_rewards, all_scores, cfg.STATE_REPRESENTATION)
 
 
 def evaluate() -> None:

@@ -1,6 +1,10 @@
 """
-Renderer for Snake game visualization using pygame.
-Completely optional and pluggable.
+Pygame-Based Renderer for Visualization
+
+Handles all pygame visualization. Used by game.py to render game state from
+snake_game.py. Reads visualization settings from configs.py. Completely optional
+and can be disabled for headless training. Receives game state (snake, food, score)
+and renders it to the pygame window.
 """
 
 import pygame
