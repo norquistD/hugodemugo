@@ -174,16 +174,16 @@ class SnakeGame:
         food_x = (
             round(
                 random.randrange(0, self.cfg.DISPLAY_WIDTH - self.cfg.BLOCK_SIZE)
-                / 10.0
+                / self.cfg.BLOCK_SIZE
             )
-            * 10.0
+            * self.cfg.BLOCK_SIZE
         )
         food_y = (
             round(
                 random.randrange(0, self.cfg.DISPLAY_HEIGHT - self.cfg.BLOCK_SIZE)
-                / 10.0
+                / self.cfg.BLOCK_SIZE
             )
-            * 10.0
+            * self.cfg.BLOCK_SIZE
         )
         return food_x, food_y
 

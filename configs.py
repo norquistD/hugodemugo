@@ -31,13 +31,13 @@ class SnakeConfig(BaseSettings):
     BLUE: tuple[int, int, int] = (50, 153, 213)
 
     # Display settings
-    BLOCK_SIZE: int = 10
-    DISPLAY_WIDTH: int = 600
-    DISPLAY_HEIGHT: int = 400
+    BLOCK_SIZE: int = 100
+    DISPLAY_WIDTH: int = 1000
+    DISPLAY_HEIGHT: int = 1000
 
     # Game settings
     QVALUES_SAVE_INTERVAL: int = Field(default=1_000, ge=1)
-    FRAME_SPEED: int = Field(default=144, ge=1)
+    FRAME_SPEED: int = Field(default=30, ge=1)
     ENABLE_VISUALIZATION: bool = False
     EVALS_MODE: bool = False
     # Maximum number of total steps (None = unlimited, works for both training and evaluation)
